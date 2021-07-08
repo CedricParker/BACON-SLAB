@@ -1,0 +1,3 @@
+engine_url: https://master.lab/ovirt-engine/api
+engine_user: admin@internal
+Engine_cafile: /etc/pki/ovirt-engine/ca.pem

@@ -1,0 +1,40 @@
+---
+- hosts: ovirt-manager
+  user: root
+  become: true
+  vars_files:
+    - host_vars.yml
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to Ovirt engine
+      ovirt_auth:
+        url: "{{ engine_url}}"
+        username: "{{ engine_user}}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true)}}"
+      tags:
+        - always
+
+  vars:
+    data_center_name: Lab-Datacenter
+    cluster_name: Lab-Cluster
+    cluster_description: ASC laptop cluster
+
+  tasks:
+    - name: Add laptop 3 host
+      ovirt_host:
+        auth: "{{ ovirt_auth }}"
+        password: "{{ host_password }}"
+        cluster: "{{ cluster_name }}"
+        name: laptop-3
+        address: l3.lab
+
+  post_tasks:
+    - name: logout from Ovirt
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth}}"
+      tags:
+        - alwaysov

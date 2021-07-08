@@ -1,0 +1,38 @@
+---
+#- hosts: nodes 
+#  tasks:
+#    - name: Set authorized key taken from file
+#      authorized_key:
+#        user: root
+#        state: present
+#        key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+
+- hosts: l1.lab
+  tasks:
+    - name: edit /etc/hosts
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          192.168.86.234  master.lab master
+          192.168.86.235  l3.lab l3
+          192.168.86.233  l2.lab l2
+
+- hosts: l2.lab
+  tasks:
+    - name: edit /etc/hosts
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          192.168.86.234  master.lab master
+          192.168.86.236  l1.lab l1  
+          192.168.86.235  l3.lab l3
+
+- hosts: l3.lab
+  tasks:
+    - name: edit /etc/hosts
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          192.168.86.234  master.lab master
+          192.168.86.236  l1.lab l1  
+          192.168.86.233  l2.lab l2

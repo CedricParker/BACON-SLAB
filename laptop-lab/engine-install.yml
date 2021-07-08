@@ -1,0 +1,15 @@
+---
+- hosts: master
+  tasks:
+  - name: yum update all packages 
+    yum:
+      name: '*'
+      state: latest
+  - name: install ovirt-repo
+    yum:
+      name: http://resources.ovirt.org/pub/yum-repo/ovirt-release43.rpm
+      state: present
+  - name: install ovirt-engine
+    yum:
+      name: ovirt-engine
+      state: latest

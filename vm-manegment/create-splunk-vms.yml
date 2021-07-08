@@ -1,0 +1,191 @@
+---
+- hosts: ovirt-manager
+  user: root
+  become: true
+  vars_files:
+    - engine_vars.yml
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to Ovirt engine
+      ovirt_auth:
+        url: "{{ engine_url}}"
+        username: "{{ engine_user}}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true)}}"
+      tags:
+        - always
+
+  vars:
+    data_center_name: Lab-Datacenter
+    cluster_name: Lab-Cluster
+    cluster_description: ASC laptop cluster
+
+  tasks:
+    - name: create sh1-vm 
+      ovirt_vm:
+        auth: "{{ ovirt_auth }}"
+        cluster: "{{ cluster_name }}"
+        name: sh1-splunk
+        state: present
+        memory: 12GiB
+        cpu_cores: 2
+        cpu_sockets: 2
+        cpu_shares: 2048
+        type: server
+        operating_system: rhel_7x64
+        boot_devices: 
+          - cdrom
+          - hd
+        disks:
+          - name: sh1-disk 
+            bootable: True
+        nics:
+          -  name: eth1
+        high_availability: true
+        graphical_console:
+          protocol:
+            - spice
+            - vnc 
+        cd_iso: CentOS-7-x86_64-DVD-1810.iso
+    - name: create sh2-vm 
+      ovirt_vm:
+        auth: "{{ ovirt_auth }}"
+        cluster: "{{ cluster_name }}"
+        name: sh2-splunk
+        state: present
+        memory: 12GiB
+        cpu_cores: 2
+        cpu_sockets: 2
+        cpu_shares: 2048
+        type: server
+        operating_system: rhel_7x64
+        boot_devices: 
+          - cdrom
+          - hd
+        disks:
+          - name: sh2-disk 
+            bootable: True
+        nics:
+          -  name: eth1
+        high_availability: true
+        graphical_console:
+          protocol:
+            - spice
+            - vnc 
+        cd_iso: CentOS-7-x86_64-DVD-1810.iso
+    - name: create sh3-vm 
+      ovirt_vm:
+        auth: "{{ ovirt_auth }}"
+        cluster: "{{ cluster_name }}"
+        name: sh3-splunk
+        state: present
+        memory: 12GiB
+        cpu_cores: 2
+        cpu_sockets: 2
+        cpu_shares: 2048
+        type: server
+        operating_system: rhel_7x64
+        boot_devices: 
+          - cdrom
+          - hd
+        disks:
+          - name: sh3-disk 
+            bootable: True
+        nics:
+          -  name: eth1
+        high_availability: true
+        graphical_console:
+          protocol:
+            - spice
+            - vnc 
+        cd_iso: CentOS-7-x86_64-DVD-1810.iso
+
+    - name: create sp1-vm 
+      ovirt_vm:
+        auth: "{{ ovirt_auth }}"
+        cluster: "{{ cluster_name }}"
+        name: sp1-splunk
+        state: present
+        memory: 12GiB
+        cpu_cores: 2
+        cpu_sockets: 2
+        cpu_shares: 2048
+        type: server
+        operating_system: rhel_7x64
+        boot_devices: 
+          - cdrom
+          - hd
+        disks:
+          - name: sp1-disk 
+            bootable: True
+        nics:
+          -  name: eth1
+        high_availability: true
+        graphical_console:
+          protocol:
+            - spice
+            - vnc 
+        cd_iso: CentOS-7-x86_64-DVD-1810.iso
+
+    - name: create sp2-vm 
+      ovirt_vm:
+        auth: "{{ ovirt_auth }}"
+        cluster: "{{ cluster_name }}"
+        name: sp2-splunk
+        state: present
+        memory: 12GiB
+        cpu_cores: 2
+        cpu_sockets: 2
+        cpu_shares: 2048
+        type: server
+        operating_system: rhel_7x64
+        boot_devices: 
+          - cdrom
+          - hd
+        disks:
+          - name: sp2-disk 
+            bootable: True
+        nics:
+          -  name: eth1
+        high_availability: true
+        graphical_console:
+          protocol:
+            - spice
+            - vnc 
+        cd_iso: CentOS-7-x86_64-DVD-1810.iso
+    - name: master splunk vm 
+      ovirt_vm:
+        auth: "{{ ovirt_auth }}"
+        cluster: "{{ cluster_name }}"
+        name: master-splunk
+        state: present
+        memory: 12GiB
+        cpu_cores: 2
+        cpu_sockets: 2
+        cpu_shares: 2048
+        type: server
+        operating_system: rhel_7x64
+        boot_devices: 
+          - cdrom
+          - hd
+        disks:
+          - name: master-disk 
+            bootable: True
+        nics:
+          -  name: eth1
+        high_availability: true
+        graphical_console:
+          protocol:
+            - spice
+            - vnc 
+        cd_iso: CentOS-7-x86_64-DVD-1810.iso
+
+  post_tasks:
+    - name: logout from Ovirt
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth}}"
+      tags:
+        - alwaysov

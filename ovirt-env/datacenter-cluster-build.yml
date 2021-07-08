@@ -1,0 +1,52 @@
+---
+- hosts: ovirt-manager
+  user: root
+  become: true
+  vars_files:
+    - engine_vars.yml
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to Ovirt engine
+      ovirt_auth:
+        url: "{{ engine_url}}"
+        username: "{{ engine_user}}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true)}}"
+      tags:
+        - always
+
+  vars:
+    data_center_name: Lab-Datacenter
+    cluster_name: Lab-Cluster
+    cluster_description: ASC laptop cluster
+
+  tasks:
+    - name: Add Data Center
+      ovirt_datacenter:
+        auth: "{{ ovirt_auth }}"
+        name: "{{ data_center_name}}"
+        local: False
+    - name: Add cluster
+      ovirt_cluster:
+        auth: "{{ ovirt_auth }}"
+        data_center: "{{ data_center_name}}"
+        state: present
+        name: "{{ cluster_name }}"
+        cpu_type: Intel Nehalem Family
+        description: "{{ cluster_description }}"
+    - name: Add cluster server network
+      ovirt_network:
+        auth: "{{ ovirt_auth }}"
+        data_center: "{{ data_center_name}}"
+        name: server-net
+        vlan_tag: 100
+        vm_network: true
+  post_tasks:
+    - name: logout from Ovirt
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth}}"
+      tags:
+        - alwaysov

@@ -1,0 +1,7 @@
+[master]
+localhost	ansible_connection=local
+
+[nodes]
+l1.lab
+l2.lab
+l3.lab

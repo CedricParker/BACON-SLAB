@@ -1,0 +1,48 @@
+---
+- hosts: ovirt-hosts-all
+  tasks:
+    - name: create nfs share dir
+      file:
+        path:  /exports/data
+        state: directory
+        recurse: yes
+        mode: 0755
+        owner: 36
+        group: 36
+    - name: Adding /exports/data to /etc/exports
+      lineinfile:
+        path: /etc/exports
+        line: /exports/data *(rw)
+        create: yes
+    - name: start rpcbind
+      service:
+        name: rpcbind
+        state: started
+    - name: start nfs
+      service:
+        name: nfs
+        state: started
+    - name: Export the storage domains
+      command: exportfs -r
+    - name: Reload the NFS service
+      service:
+        name: nfs
+        state: reloaded
+    - firewalld:
+        service: rpc-bind
+        permanent: yes
+        state: enabled
+    - firewalld:
+        service: mountd
+        permanent: yes
+        state: enabled
+    - firewalld:
+        port: 2049/tcp
+        permanent: yes
+        state: enabled
+    - firewalld:
+        port: 2049/udp
+        permanent: yes
+        state: enabled
+
+

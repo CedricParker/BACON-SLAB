@@ -1,0 +1,12 @@
+master.lab
+l1.lab
+l2.lab
+l3.lab
+
+[ovirt-manager]
+localhost	ansible_connection=local
+
+[ovirt-hosts-all]
+l1.lab
+l2.lab
+l3.lab

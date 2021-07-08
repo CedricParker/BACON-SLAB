@@ -1,0 +1,48 @@
+---
+- hosts: ovirt-manager
+  user: root
+  become: true
+  vars_files:
+    - engine_vars.yml
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to Ovirt engine
+      ovirt_auth:
+        url: "{{ engine_url}}"
+        username: "{{ engine_user}}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true)}}"
+      tags:
+        - always
+
+  vars:
+    data_center_name: Lab-Datacenter
+    cluster_name: Lab-Cluster
+    cluster_description: ASC laptop cluster
+
+  tasks:
+    - name: create vm disk 
+      ovirt_disk:
+        auth: "{{ ovirt_auth }}"
+        name: "{{ item }}"
+        size: 20GiB
+        format: cow
+        interface: virtio
+        storage_domain: data_nfs
+      with_items:
+        - sh1-disk
+        - sh2-disk
+        - sh3-disk
+        - sp1-disk
+        - sp2-disk
+        - master-disk
+
+  post_tasks:
+    - name: logout from Ovirt
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth}}"
+      tags:
+        - alwaysov

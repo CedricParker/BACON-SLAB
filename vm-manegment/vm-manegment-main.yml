@@ -1,0 +1,4 @@
+---
+
+- import_playbook: create-splunk-vm-disks.yml  
+- import_playbook: create-splunk-vms.yml
